@@ -6,14 +6,18 @@ import { CANAL_PRESTAMOS, SEGUNDOS_RECORDATORIO } from '@/constants/biblioteca';
 
 // Muestra las notificaciones también cuando la app está abierta.
 export function configurarNotificaciones(): void {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowBanner: true,
-      shouldShowList: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
+  try {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowBanner: true,
+        shouldShowList: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+  } catch {
+    // Si el entorno limita el manejador inicial, no bloquea el inicio de la app.
+  }
 }
 
 // En Android 13+ el canal tiene que existir antes de pedir el permiso.

@@ -10,7 +10,13 @@ export function NavegadorRaiz() {
   const { listo, sesion } = useBiblioteca();
 
   useEffect(() => {
-    if (listo) SplashScreen.hide();
+    if (listo) {
+      if (typeof SplashScreen.hideAsync === 'function') {
+        SplashScreen.hideAsync().catch(() => {});
+      } else if (typeof SplashScreen.hide === 'function') {
+        SplashScreen.hide();
+      }
+    }
   }, [listo]);
 
   // Mientras se cargan los datos guardados sigue visible la pantalla de carga: la app no se ve vacía.

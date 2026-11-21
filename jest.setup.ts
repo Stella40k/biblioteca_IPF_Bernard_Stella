@@ -9,6 +9,7 @@ jest.mock('@react-native-async-storage/async-storage', () =>
 jest.mock('expo-splash-screen', () => ({
   preventAutoHideAsync: jest.fn(async () => true),
   hide: jest.fn(),
+  hideAsync: jest.fn(async () => true),
 }));
 
 jest.mock('expo-notifications', () => {

@@ -64,13 +64,26 @@ export function BibliotecaProvider({ children }: Props) {
   // Carga lo guardado y lo reconcilia con las notificaciones que el sistema todavía tiene programadas.
   useEffect(() => {
     let activo = true;
+
     async function hidratar() {
-      const [guardado, programados] = await Promise.all([cargarEstado(), idsProgramados()]);
-      if (activo) dispatch({ tipo: 'hidratar', guardado, idsProgramados: programados });
+      try {
+        const [guardado, programados] = await Promise.all([cargarEstado(), idsProgramados()]);
+        if (activo) dispatch({ tipo: 'hidratar', guardado, idsProgramados: programados });
+      } catch {
+        if (activo) dispatch({ tipo: 'hidratar', guardado: null, idsProgramados: null });
+      }
     }
-    hidratar();
+
+    // Timeout de seguridad: asegura que la app nunca quede trabada cargando si el SO demora en responder.
+    const temporizadorSeguridad = setTimeout(() => {
+      if (activo) dispatch({ tipo: 'hidratar', guardado: null, idsProgramados: null });
+    }, 1500);
+
+    hidratar().finally(() => clearTimeout(temporizadorSeguridad));
+
     return () => {
       activo = false;
+      clearTimeout(temporizadorSeguridad);
     };
   }, []);
 
